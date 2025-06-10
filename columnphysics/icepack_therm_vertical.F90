@@ -2742,20 +2742,13 @@
                                  prescribed_ice=prescribed_ice)
 
             if (icepack_warnings_aborted(subname)) then
-               write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
-               call icepack_warnings_add(warnstr)
-               return
-            endif
-
-            ! Translate changes in apond into apnd tracer
-            if (tr_pond_lvl) then
-               if (alvl(n) > puny) then
-                  apnd(n) = max(apond(n) / alvl(n), c1)
-               else
-                  apnd(n) = c0
-               endif
-            else
-               apnd(n) = apond(n)
+               write(warnstr,*) subname, ' ice: Vertical thermo error, cat, i, j, iblk,task, task+iblk/100 = ', n, i,j,iblk,task,real(task)+real(iblk)/real(100)
+               if ((vicen(n)/aicen(n)) > real(5e-2)) then 
+		  call icepack_warnings_add(warnstr)
+		  return
+	       else 
+		  call icepack_warnings_setabort(.false.,__FILE__,__LINE__)
+	       endif
             endif
 
             if (snwgrain) then
