@@ -2742,7 +2742,6 @@
                                  prescribed_ice=prescribed_ice)
 
             if (icepack_warnings_aborted(subname)) then
-               write(warnstr,*) subname, ' ice: Vertical thermo error, cat, i, j, iblk,task, task+iblk/100 = ', n, i,j,iblk,task,real(task)+real(iblk)/real(100)
                if ((vicen(n)/aicen(n)) > real(5e-2)) then 
 		  call icepack_warnings_add(warnstr)
 		  return
