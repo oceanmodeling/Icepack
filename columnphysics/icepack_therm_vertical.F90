@@ -2742,10 +2742,15 @@
                                  prescribed_ice=prescribed_ice)
 
             if (icepack_warnings_aborted(subname)) then
-               write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
-               call icepack_warnings_add(warnstr)
-               return
+               if ((vicen(n)/aicen(n)) > real(5e-2)) then
+                  write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
+                  call icepack_warnings_add(warnstr)
+                  return
+               else 
+                  call icepack_warnings_setabort(.false.,__FILE__,__LINE__)
+               endif
             endif
+
 
             ! Translate changes in apond into apnd tracer
             if (tr_pond_lvl) then
