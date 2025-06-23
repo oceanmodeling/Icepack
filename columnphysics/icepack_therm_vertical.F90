@@ -2730,22 +2730,23 @@
                                  yday=yday,           dsnow=l_dsnown         , &
                                  prescribed_ice=prescribed_ice)
 
-            if (icepack_warnings_aborted(subname)) then
-               
-               if ((vicen(n)/aicen(n)) > real(5e-2)) then
+            if (sea_ice_time_bry) then  
+               if (icepack_warnings_aborted(subname)) then
+                   if ((vicen(n)/aicen(n)) > real(5e-2)) then
+                        write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
+                        call icepack_warnings_add(warnstr)
+                        return
+                   else 
+                        call icepack_warnings_setabort(.false.,__FILE__,__LINE__)
+                   endif
+               endif
+            else
+                if (icepack_warnings_aborted(subname)) then
                   write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
                   call icepack_warnings_add(warnstr)
                   return
-               else 
-                  call icepack_warnings_setabort(.false.,__FILE__,__LINE__)
-               endif
-               
-               !write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
-               !call icepack_warnings_add(warnstr)
-               !return
-            
+                endif
             endif
-            
 
             if (snwgrain) then
                rsnwn (:,n) = rsnw (:)
