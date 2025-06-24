@@ -176,7 +176,9 @@
          saltflux_option  = 'constant'! Salt flux computation
                                       ! 'constant' reference value of ice_ref_salinity
                                       ! 'prognostic' prognostic salt flux
-
+      
+      logical (kind=log_kind), public :: &
+         sea_ice_time_bry     = .false.
 !-----------------------------------------------------------------------
 ! Parameters for radiation
 !-----------------------------------------------------------------------
@@ -639,7 +641,7 @@
          ratio_C2N_diatoms_in, ratio_C2N_sp_in, ratio_C2N_phaeo_in, &
          ratio_chl2N_diatoms_in, ratio_chl2N_sp_in, ratio_chl2N_phaeo_in, &
          F_abs_chl_diatoms_in, F_abs_chl_sp_in, F_abs_chl_phaeo_in, &
-         ratio_C2N_proteins_in )
+         ratio_C2N_proteins_in,sea_ice_time_bry_in )
 
       !-----------------------------------------------------------------
       ! control settings
@@ -746,7 +748,8 @@
          saltflux_option_in       ! Salt flux computation
                                   ! 'constant' reference value of ice_ref_salinity
                                   ! 'prognostic' prognostic salt flux
-
+      logical (kind=log_kind), intent(in), optional :: &
+         sea_ice_time_bry_in
 !-----------------------------------------------------------------------
 ! Parameters for radiation
 !-----------------------------------------------------------------------
@@ -1254,6 +1257,7 @@
       if (present(snw_growth_wet_in)    ) snw_growth_wet   = snw_growth_wet_in
       if (present(drsnw_min_in)         ) drsnw_min        = drsnw_min_in
       if (present(snwliq_max_in)        ) snwliq_max       = snwliq_max_in
+      if (present(sea_ice_time_bry_in)  ) sea_ice_time_bry = sea_ice_time_bry_in
 
       !-------------------
       ! SNOW table
