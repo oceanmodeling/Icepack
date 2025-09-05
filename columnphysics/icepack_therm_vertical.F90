@@ -1324,7 +1324,7 @@
          ! enthalpy of new ice growing at bottom surface
             if (l_brine) then
                qbotmax = -p5*rhoi*Lfresh  ! max enthalpy of ice growing at bottom
-               if (sea_ice_time_bry) then
+               !if (sea_ice_time_bry) then
                   if (Tbot == 0 ) then
                      qbot = qbotmax
                   else
@@ -1333,12 +1333,12 @@
                           - cp_ocn * Tmlts)
                      qbot = min (qbot, qbotmax)      ! in case Tbot is close to Tmlt
                   endif
-               else
-                  qbot = -rhoi * (cp_ice * (Tmlts-Tbot) &
-                       + Lfresh * (c1-Tmlts/Tbot) &
-                       - cp_ocn * Tmlts)
-                  qbot = min (qbot, qbotmax)      ! in case Tbot is close to Tmlt
-               endif
+               !else
+               !   qbot = -rhoi * (cp_ice * (Tmlts-Tbot) &
+               !        + Lfresh * (c1-Tmlts/Tbot) &
+               !        - cp_ocn * Tmlts)
+               !   qbot = min (qbot, qbotmax)      ! in case Tbot is close to Tmlt
+               !endif
             else
                qbot = -rhoi * (-cp_ice * Tbot + Lfresh)
             endif
