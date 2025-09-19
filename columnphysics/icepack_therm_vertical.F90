@@ -26,7 +26,7 @@
       use icepack_parameters, only: c0, c1, c2, p001, p5, puny
       use icepack_parameters, only: pi, depressT, Lvap, hs_min, cp_ice, min_salin
       use icepack_parameters, only: cp_ocn, rhow, rhoi, rhos, Lfresh, rhofresh, ice_ref_salinity
-      use icepack_parameters, only: ktherm, calc_Tsfc, rsnw_fall, rsnw_tmax
+      use icepack_parameters, only: ktherm, calc_Tsfc, rsnw_fall, rsnw_tmax, sea_ice_time_bry
       use icepack_parameters, only: ustar_min, fbot_xfer_type, formdrag, calc_strair
       use icepack_parameters, only: rfracmin, rfracmax, dpscale, frzpnd, snwgrain, snwlvlfac
       use icepack_parameters, only: phi_i_mushy, floeshape, floediam, use_smliq_pnd, snwredist
@@ -1324,10 +1324,14 @@
          ! enthalpy of new ice growing at bottom surface
             if (l_brine) then
                qbotmax = -p5*rhoi*Lfresh  ! max enthalpy of ice growing at bottom
-               qbot = -rhoi * (cp_ice * (Tmlts-Tbot) &
-                    + Lfresh * (c1-Tmlts/Tbot) &
-                    - cp_ocn * Tmlts)
-               qbot = min (qbot, qbotmax)      ! in case Tbot is close to Tmlt
+                  if (Tbot == 0 ) then
+                     qbot = qbotmax
+                  else
+                     qbot = -rhoi * (cp_ice * (Tmlts-Tbot) &
+                          + Lfresh * (c1-Tmlts/Tbot) &
+                          - cp_ocn * Tmlts)
+                     qbot = min (qbot, qbotmax)      ! in case Tbot is close to Tmlt
+                  endif
             else
                qbot = -rhoi * (-cp_ice * Tbot + Lfresh)
             endif
@@ -2741,10 +2745,22 @@
                                  yday=yday,           dsnow=l_dsnown         , &
                                  prescribed_ice=prescribed_ice)
 
-            if (icepack_warnings_aborted(subname)) then
-               write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
-               call icepack_warnings_add(warnstr)
-               return
+            if (sea_ice_time_bry) then  
+               if (icepack_warnings_aborted(subname)) then
+                   if ((vicen(n)/aicen(n)) > real(5e-2)) then
+                        write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
+                        call icepack_warnings_add(warnstr)
+                        return
+                   else 
+                        call icepack_warnings_setabort(.false.,__FILE__,__LINE__)
+                   endif
+               endif
+            else
+                if (icepack_warnings_aborted(subname)) then
+                  write(warnstr,*) subname, ' ice: Vertical thermo error, cat ', n
+                  call icepack_warnings_add(warnstr)
+                  return
+                endif
             endif
 
             ! Translate changes in apond into apnd tracer
